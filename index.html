@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPL Auction Game | Build Your Squad. Manage Your Purse. Win The Auction.</title>
+  <meta name="description" content="Playable online IPL Auction Game & Simulator supporting 19 IPL seasons from 2008 to 2026. Manage your ₹120 Cr purse, battle realistic AI franchises, and build the ultimate championship squad.">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Verified Historical Data Files (2008 - 2026) -->
+  <script src="data/2008.js"></script>
+  <script src="data/2009.js"></script>
+  <script src="data/2010.js"></script>
+  <script src="data/2011.js"></script>
+  <script src="data/2012.js"></script>
+  <script src="data/2013.js"></script>
+  <script src="data/2014.js"></script>
+  <script src="data/2015.js"></script>
+  <script src="data/2016.js"></script>
+  <script src="data/2017.js"></script>
+  <script src="data/2018.js"></script>
+  <script src="data/2019.js"></script>
+  <script src="data/2020.js"></script>
+  <script src="data/2021.js"></script>
+  <script src="data/2022.js"></script>
+  <script src="data/2023.js"></script>
+  <script src="data/2024.js"></script>
+  <script src="data/2025.js"></script>
+  <script src="data/2026.js"></script>
+
+  <!-- Web Audio API Sound Synthesizer -->
+  <script src="sound.js"></script>
+</head>
+<body class="theme-dark">
+
+  <!-- TOP BROADCAST HEADER -->
+  <header class="main-header" id="mainHeader">
+    <div class="header-container">
+      <div class="brand-zone" onclick="window.iplApp.navigateTo('home')">
+        <div class="brand-logo">
+          <span class="logo-icon">🏏</span>
+          <div class="logo-text-group">
+            <span class="brand-title">IPL AUCTION <span class="gold-badge">PRO</span></span>
+            <span class="brand-sub">SIMULATOR 2008–2026</span>
+          </div>
+        </div>
+        <div class="season-badge-pill" id="currentSeasonBadge" style="display: none;">
+          <span class="pulse-dot"></span>
+          <span id="badgeSeasonText">IPL 2024</span>
+        </div>
+      </div>
+
+      <!-- Main Navigation -->
+      <nav class="nav-menu" id="navMenu">
+        <button class="nav-item active" data-target="home" onclick="window.iplApp.navigateTo('home')">Home</button>
+        <button class="nav-item" data-target="seasons" onclick="window.iplApp.navigateTo('seasons')">Seasons</button>
+        <button class="nav-item" data-target="auction" id="navAuctionBtn" onclick="window.iplApp.navigateTo('auction')">
+          Auction <span class="live-pill" id="auctionLivePill">LIVE</span>
+        </button>
+        <button class="nav-item" data-target="players" onclick="window.iplApp.navigateTo('players')">Players</button>
+        <button class="nav-item" data-target="squad" onclick="window.iplApp.navigateTo('squad')">
+          My Squad <span class="squad-count-chip" id="navSquadCount">0/25</span>
+        </button>
+        <button class="nav-item" data-target="teams" onclick="window.iplApp.navigateTo('teams')">Teams</button>
+        <button class="nav-item" data-target="statistics" onclick="window.iplApp.navigateTo('statistics')">Statistics</button>
+        <button class="nav-item" data-target="history" onclick="window.iplApp.navigateTo('history')">History</button>
+        <button class="nav-item" data-target="results" id="navResultsBtn" onclick="window.iplApp.navigateTo('results')">Results</button>
+      </nav>
+
+      <!-- Action Controls -->
+      <div class="header-actions">
+        <!-- Live Purse Pill for User -->
+        <div class="user-purse-pill" id="headerPursePill" style="display: none;" onclick="window.iplApp.navigateTo('squad')" title="Your Team Remaining Purse">
+          <span class="purse-label">MY PURSE</span>
+          <span class="purse-amount" id="headerPurseAmount">₹120.00 Cr</span>
+        </div>
+
+        <!-- Sound Button -->
+        <button class="icon-btn" id="soundToggleBtn" onclick="window.iplApp.toggleSound()" title="Toggle Auction Sounds">
+          <span id="soundIcon">🔊</span>
+          <span class="btn-text">Sound ON</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button class="icon-btn btn-danger-outline" id="resetAuctionBtn" onclick="window.iplApp.promptReset()" title="Reset Auction Progress">
+          <span>↺</span>
+          <span class="btn-text">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NOTIFICATION TOAST CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- MAIN APPLICATION CONTAINER -->
+  <main class="app-main" id="appMain">
+
+    <!-- ========================================== -->
+    <!-- 1. HOME VIEW -->
+    <!-- ========================================== -->
+    <section id="view-home" class="app-view active">
+      <div class="hero-section">
+        <div class="hero-glow"></div>
+        <div class="hero-content">
+          <div class="trophy-emblem">🏆</div>
+          <span class="hero-eyebrow">THE ULTIMATE CRICKET SIMULATOR</span>
+          <h1 class="hero-title">IPL AUCTION GAME</h1>
+          <p class="hero-tagline">“Build Your Squad. Manage Your Purse. Win The Auction.”</p>
+          
+          <div class="hero-stats-row">
+            <div class="stat-capsule">
+              <span class="stat-number">19</span>
+              <span class="stat-label">IPL Seasons (2008–2026)</span>
+            </div>
+            <div class="stat-capsule">
+              <span class="stat-number">₹120 Cr</span>
+              <span class="stat-label">Starting Purse Per Team</span>
+            </div>
+            <div class="stat-capsule">
+              <span class="stat-number">Smart AI</span>
+              <span class="stat-label">Franchise Competitors</span>
+            </div>
+            <div class="stat-capsule">
+              <span class="stat-number">100%</span>
+              <span class="stat-label">Verified Historical Data</span>
+            </div>
+          </div>
+
+          <!-- Saved Game Alert if any -->
+          <div id="homeResumeBanner" class="resume-game-card" style="display: none;">
+            <div class="resume-details">
+              <span class="resume-tag">SESSION FOUND</span>
+              <h3 id="resumeTitle">Resume IPL 2024 Auction as CSK</h3>
+              <p id="resumeSubtitle">Purse: ₹102.50 Cr | Players Bought: 4 | Status: Live</p>
+            </div>
+            <div class="resume-actions">
+              <button class="btn btn-primary" onclick="window.iplApp.resumeSavedGame()">CONTINUE AUCTION</button>
+              <button class="btn btn-secondary" onclick="window.iplApp.promptReset()">START NEW</button>
+            </div>
+          </div>
+
+          <div class="hero-cta-group">
+            <button class="btn btn-gold btn-large" onclick="window.iplApp.startAuctionFlow('solo')">
+              <span>👤 START SOLO AUCTION (VS AI)</span>
+              <span class="btn-arrow">→</span>
+            </button>
+            <button class="btn btn-primary btn-large" onclick="window.iplApp.startAuctionFlow('party')">
+              <span>👥 PLAY WITH FRIENDS (PARTY MODE)</span>
+              <span>🎮</span>
+            </button>
+            <button class="btn btn-glass btn-large" onclick="window.iplApp.navigateTo('history')">
+              <span>EXPLORE IPL HISTORY</span>
+              <span>📜</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Features Cards -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>Realistic Live Bidding</h3>
+          <p>Real-time countdown timer, dynamic bids (+₹0.25 Cr to +₹2 Cr), and authentic gavel hammer sound effects.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Intelligent AI Franchises</h3>
+          <p>AI evaluates player ratings, role scarcity, overseas limits, and budget reserves with strategic bids.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚖️</div>
+          <h3>Purse & Squad Balance</h3>
+          <p>Enforce official IPL squad caps (18–25 players, max 8 overseas) and dynamic squad balance rating meters.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Comprehensive Analytics</h3>
+          <p>Track highest bids, average spending, squad composition breakdowns, and post-auction franchise rankings.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. SEASON SELECTION VIEW -->
+    <!-- ========================================== -->
+    <section id="view-seasons" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">STEP 1 OF 2</span>
+          <h2>Select IPL Season</h2>
+          <p>Choose any edition from 2008 to 2026. Only verified historical teams and players will be loaded.</p>
+        </div>
+        <div class="season-filter-tabs">
+          <button class="filter-tab active" onclick="window.iplApp.filterSeasonCards('all', this)">All (19)</button>
+          <button class="filter-tab" onclick="window.iplApp.filterSeasonCards('modern', this)">Modern (2021-2026)</button>
+          <button class="filter-tab" onclick="window.iplApp.filterSeasonCards('middle', this)">Middle Era (2014-2020)</button>
+          <button class="filter-tab" onclick="window.iplApp.filterSeasonCards('classic', this)">Classic Era (2008-2013)</button>
+        </div>
+      </div>
+
+      <!-- Season Cards Grid -->
+      <div class="seasons-grid" id="seasonsGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Modal/Drawer for Selected Season Confirmation -->
+      <div class="season-confirm-bar" id="seasonConfirmBar" style="display: none;">
+        <div class="confirm-info">
+          <span class="confirm-tag">SELECTED SEASON</span>
+          <h3 id="selectedSeasonTitle">IPL 2024</h3>
+          <p id="selectedSeasonSummary">10 Teams • 20 Marquee Players • Starting Purse ₹120.00 Cr</p>
+          <div class="participating-teams-chips" id="participatingTeamsChips"></div>
+        </div>
+        <button class="btn btn-gold btn-large" onclick="window.iplApp.confirmSeasonAndProceed()">
+          CONTINUE TO TEAM SELECTION →
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. TEAM SELECTION VIEW -->
+    <!-- ========================================== -->
+    <section id="view-team-select" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">STEP 2 OF 2</span>
+          <h2>Select Your Franchise & Play Mode</h2>
+          <p id="teamSelectSub">Choose your team for Season <span id="teamSelectSeasonYear">2021</span>. Play Solo vs AI or in 10-Friends Party Mode!</p>
+        </div>
+        <div class="mode-toggle-group">
+          <button class="mode-toggle-btn active" id="btnModeSolo" onclick="window.iplApp.setPlayMode('solo')">Solo Mode (1 vs AI)</button>
+          <button class="mode-toggle-btn" id="btnModeParty" onclick="window.iplApp.setPlayMode('party')">🎮 10 Friends Party Mode</button>
+        </div>
+        <button class="btn btn-secondary" onclick="window.iplApp.navigateTo('seasons')">← Change Season</button>
+      </div>
+
+      <!-- 10 Friends Assignment Configuration Box (shown in Party Mode) -->
+      <div class="friends-config-panel" id="friendsConfigPanel" style="display: none;">
+        <div class="friends-panel-header">
+          <div>
+            <h3>👥 10 Friends Manager Rosters</h3>
+            <p>Each friend will manage a franchise with ₹120.00 Cr purse in the live auction room. Custom names are editable.</p>
+          </div>
+          <button class="btn btn-gold btn-large" onclick="window.iplApp.confirm10FriendsAndStart()">
+            START 10-FRIENDS AUCTION 🔨
+          </button>
+        </div>
+        <div class="friends-roster-grid" id="friendsRosterGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <div class="teams-selection-grid" id="teamsSelectGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="team-confirm-bar" id="teamConfirmBar" style="display: none;">
+        <div class="confirm-info">
+          <span class="confirm-tag">YOUR FRANCHISE</span>
+          <h3 id="selectedTeamName">Chennai Super Kings</h3>
+          <p>Starting Purse: <strong class="text-gold">₹120.00 Crore</strong> | Squad Target: 18–25 Players</p>
+        </div>
+        <button class="btn btn-gold btn-large" onclick="window.iplApp.confirmTeamAndStartAuction()">
+          ENTER AUCTION ROOM 🔨
+        </button>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. MAIN AUCTION ROOM VIEW -->
+    <!-- ========================================== -->
+    <section id="view-auction" class="app-view">
+      <div class="auction-top-bar">
+        <div class="auction-progress-pill">
+          <span class="progress-label">AUCTION PROGRESS:</span>
+          <span class="progress-val" id="auctionPlayerCounter">Player 1 of 20</span>
+          <div class="progress-bar-inline">
+            <div class="progress-fill" id="auctionProgressBar" style="width: 5%;"></div>
+          </div>
+        </div>
+
+        <div class="auction-speed-controls">
+          <span class="ctrl-label">PACE:</span>
+          <button class="speed-btn active" id="speed1x" onclick="window.iplApp.setAuctionSpeed(1)">1x Normal</button>
+          <button class="speed-btn" id="speed2x" onclick="window.iplApp.setAuctionSpeed(2)">2x Fast</button>
+          <label class="auto-advance-check">
+            <input type="checkbox" id="autoAdvanceCheck" checked>
+            <span>Auto Next Player</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 3-COLUMN DESKTOP LAYOUT -->
+      <div class="auction-room-layout">
+        
+        <!-- LEFT COLUMN: CURRENT PLAYER CARD -->
+        <div class="auction-col player-column">
+          <div class="column-card player-showcase-card" id="playerShowcaseCard">
+            <div class="card-glass-header">
+              <span class="card-eyebrow">CURRENT PLAYER UNDER THE HAMMER</span>
+              <span class="player-pool-tag" id="playerPoolTag">LOT #1</span>
+            </div>
+
+            <!-- Avatar & Role Badge -->
+            <div class="player-avatar-wrapper">
+              <div class="player-avatar" id="playerAvatar">
+                <span class="avatar-initials" id="playerInitials">VK</span>
+              </div>
+              <div class="role-badge" id="playerRoleBadge">Batter</div>
+            </div>
+
+            <!-- Player Details -->
+            <div class="player-meta-box">
+              <h2 class="player-name" id="playerName">Virat Kohli</h2>
+              <div class="player-sub-tags">
+                <span class="country-tag" id="playerCountry">🇮🇳 India</span>
+                <span class="original-team-tag" id="playerOriginalTeam">RCB</span>
+              </div>
+              <p class="player-bio" id="playerBio">Modern master and all-time leading IPL run scorer.</p>
+            </div>
+
+            <!-- Ratings Box -->
+            <div class="ratings-breakdown-card">
+              <div class="overall-rating-display">
+                <span class="rating-num" id="playerRatingNum">98</span>
+                <span class="rating-lbl">OVERALL</span>
+              </div>
+              <div class="skill-meters">
+                <div class="skill-meter-row">
+                  <span>Batting</span>
+                  <div class="meter-bar"><div class="fill" id="meterBatting" style="width: 98%;"></div></div>
+                  <span class="score-val" id="scoreBatting">98</span>
+                </div>
+                <div class="skill-meter-row">
+                  <span>Bowling</span>
+                  <div class="meter-bar"><div class="fill" id="meterBowling" style="width: 20%;"></div></div>
+                  <span class="score-val" id="scoreBowling">20</span>
+                </div>
+                <div class="skill-meter-row">
+                  <span>Fielding</span>
+                  <div class="meter-bar"><div class="fill" id="meterFielding" style="width: 92%;"></div></div>
+                  <span class="score-val" id="scoreFielding">92</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Price Specs -->
+            <div class="price-specs-grid">
+              <div class="spec-cell">
+                <span class="spec-title">BASE PRICE</span>
+                <span class="spec-value text-gold" id="playerBasePrice">₹2.00 Cr</span>
+              </div>
+              <div class="spec-cell">
+                <span class="spec-title">OVERSEAS</span>
+                <span class="spec-value" id="playerOverseasStatus">No</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER COLUMN: LIVE BIDDING ARENA -->
+        <div class="auction-col bidding-column">
+          <div class="column-card bidding-arena-card">
+            
+            <!-- Auctioneer Status Banner -->
+            <div class="auctioneer-status-bar" id="auctioneerStatus">
+              <span class="status-icon">🔨</span>
+              <span class="status-msg" id="statusMessage">BIDDING ACTIVE</span>
+            </div>
+
+            <!-- Main Bidding Board -->
+            <div class="digital-bid-board">
+              <span class="board-label">CURRENT HIGHEST BID</span>
+              <div class="current-bid-amount" id="currentBidDisplay">₹2.00 Cr</div>
+              
+              <!-- Highest Bidder Box -->
+              <div class="highest-bidder-pill" id="highestBidderPill">
+                <span class="bidder-badge" id="highestBidderBadge">⏳</span>
+                <div class="bidder-info">
+                  <span class="bidder-label">HIGHEST BIDDER:</span>
+                  <strong class="bidder-team-name" id="highestBidderName">None (Base Price)</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Countdown Timer -->
+            <div class="countdown-arena">
+              <div class="timer-circle-container">
+                <svg class="timer-svg" viewBox="0 0 100 100">
+                  <circle class="timer-bg-circle" cx="50" cy="50" r="42"></circle>
+                  <circle class="timer-progress-circle" id="timerCircle" cx="50" cy="50" r="42"></circle>
+                </svg>
+                <div class="timer-number-display" id="timerNumber">10</div>
+              </div>
+              <div class="timer-caption" id="timerCaption">BIDDING CLOSES IN</div>
+            </div>
+
+            <!-- SOLD / UNSOLD POPUP OVERLAY -->
+            <div class="sold-overlay" id="soldOverlay" style="display: none;">
+              <div class="sold-card-modal" id="soldCardModal">
+                <div class="sold-icon" id="soldModalIcon">🔥</div>
+                <h2 class="sold-title" id="soldModalTitle">SOLD!</h2>
+                <div class="sold-player-name" id="soldModalPlayer">Virat Kohli</div>
+                <div class="sold-price" id="soldModalPrice">₹18.50 Cr</div>
+                <div class="sold-team" id="soldModalTeam">Royal Challengers Bengaluru</div>
+                <button class="btn btn-primary" id="soldNextBtn" onclick="window.iplApp.nextPlayerManual()">NEXT PLAYER →</button>
+              </div>
+            </div>
+
+            <!-- USER / MULTIPLAYER BIDDING CONTROLS -->
+            <div class="user-bid-controls" id="userControlsPanel">
+              
+              <!-- Manager Paddles Row (for 10 Friends & multi-manager play) -->
+              <div class="manager-paddle-bar" id="managerPaddleBar">
+                <div class="paddle-bar-header">
+                  <span>SELECT BIDDING FRANCHISE:</span>
+                  <span class="active-manager-name text-gold" id="activeManagerTag">Friend 1 (CSK)</span>
+                </div>
+                <div class="paddles-scroll-row" id="paddlesScrollRow">
+                  <!-- Rendered dynamically for all 10 friends/teams -->
+                </div>
+              </div>
+
+              <div class="controls-header">
+                <span>BIDDING AS: <strong id="userControlsTeamCode">Friend 1 (CSK)</strong></span>
+                <span class="purse-reminder">Remaining: <strong class="text-gold" id="userControlsPurse">₹120.00 Cr</strong></span>
+              </div>
+
+              <!-- Quick Bid Increments -->
+              <div class="bid-buttons-grid">
+                <button class="bid-btn" id="btnBid25" onclick="window.iplApp.userPlaceBid(0.25)">+ ₹0.25 Cr</button>
+                <button class="bid-btn" id="btnBid50" onclick="window.iplApp.userPlaceBid(0.50)">+ ₹0.50 Cr</button>
+                <button class="bid-btn" id="btnBid100" onclick="window.iplApp.userPlaceBid(1.00)">+ ₹1.00 Cr</button>
+                <button class="bid-btn" id="btnBid200" onclick="window.iplApp.userPlaceBid(2.00)">+ ₹2.00 Cr</button>
+              </div>
+
+              <!-- Pass & Custom Controls -->
+              <div class="action-buttons-row">
+                <button class="btn btn-warning" id="btnSkipPlayer" onclick="window.iplApp.userPassPlayer()">
+                  SKIP / PASS (Let AI Bid)
+                </button>
+                <button class="btn btn-secondary" id="btnPauseAuction" onclick="window.iplApp.togglePauseAuction()">
+                  ⏸ Pause
+                </button>
+              </div>
+
+              <!-- Insufficient Purse Alert Box -->
+              <div class="bid-error-msg" id="bidErrorMsg" style="display: none;">
+                ⚠️ INSUFFICIENT PURSE: Cannot place bid above remaining funds!
+              </div>
+            </div>
+
+            <!-- LIVE BIDDING HISTORY TICKER -->
+            <div class="bid-history-panel">
+              <div class="panel-header">
+                <span>AUCTION ACTIVITY FEED</span>
+                <span class="feed-tag">LIVE</span>
+              </div>
+              <div class="bid-history-feed" id="bidHistoryFeed">
+                <div class="feed-entry placeholder-entry">Auction is ready to begin. Place your bid or let AI initiate.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: TEAMS & SQUAD MONITOR -->
+        <div class="auction-col monitor-column">
+          
+          <!-- User Team Spotlight Card -->
+          <div class="column-card my-team-summary-card" id="myTeamSummaryCard">
+            <div class="summary-header">
+              <div class="team-badge-circle" id="myTeamBadge">🦁</div>
+              <div class="team-titles">
+                <span class="my-team-label">MY FRANCHISE</span>
+                <h3 id="myTeamName">Chennai Super Kings</h3>
+              </div>
+            </div>
+
+            <div class="purse-summary-grid">
+              <div class="purse-stat-box">
+                <span class="box-lbl">REMAINING PURSE</span>
+                <span class="box-val text-gold" id="myTeamPurseRemaining">₹120.00 Cr</span>
+              </div>
+              <div class="purse-stat-box">
+                <span class="box-lbl">SPENT</span>
+                <span class="box-val" id="myTeamPurseSpent">₹0.00 Cr</span>
+              </div>
+            </div>
+
+            <div class="squad-quick-stats">
+              <div class="squad-stat-item">
+                <span class="stat-name">Squad Size</span>
+                <strong class="stat-val" id="myTeamSquadSize">0 / 25</strong>
+              </div>
+              <div class="squad-stat-item">
+                <span class="stat-name">Overseas</span>
+                <strong class="stat-val" id="myTeamOverseasSize">0 / 8</strong>
+              </div>
+              <div class="squad-stat-item">
+                <span class="stat-name">Squad Rating</span>
+                <strong class="stat-val text-emerald" id="myTeamSquadRating">--</strong>
+              </div>
+            </div>
+
+            <button class="btn btn-glass btn-block" onclick="window.iplApp.navigateTo('squad')">
+              VIEW FULL SQUAD →
+            </button>
+          </div>
+
+          <!-- All Franchises Leaderboard / Purse Board -->
+          <div class="column-card ai-teams-leaderboard-card">
+            <div class="panel-header">
+              <span>ALL FRANCHISES PURSE</span>
+              <span class="count-tag" id="aiTeamsCountTag">10 Teams</span>
+            </div>
+            <div class="teams-purse-list" id="teamsPurseList">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- END OF ROUND ACTION BAR (Hidden until all players finished) -->
+      <div class="round-complete-bar" id="roundCompleteBar" style="display: none;">
+        <div class="complete-info">
+          <h3>🎉 AUCTION ROUND COMPLETE</h3>
+          <p id="roundCompleteSummary">All players have been auctioned! You can re-auction unsold players or view final rankings.</p>
+        </div>
+        <div class="complete-actions">
+          <button class="btn btn-warning" id="btnReauctionUnsold" onclick="window.iplApp.startUnsoldRound()">
+            RE-AUCTION UNSOLD PLAYERS (<span id="unsoldCounter">0</span>)
+          </button>
+          <button class="btn btn-gold btn-large" onclick="window.iplApp.finishAuctionAndShowResults()">
+            VIEW FINAL RESULTS 🏆
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 5. MY SQUAD VIEW -->
+    <!-- ========================================== -->
+    <section id="view-squad" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">FRANCHISE ROSTER</span>
+          <h2 id="squadPageTitle">My Squad</h2>
+          <p id="squadPageSubtitle">Review your acquired players, squad balance, and overall rating.</p>
+        </div>
+        <button class="btn btn-primary" onclick="window.iplApp.navigateTo('auction')">← Back to Auction</button>
+      </div>
+
+      <!-- Franchise Selector Tabs (allows inspecting any Friend's squad) -->
+      <div class="squad-manager-tabs" id="squadManagerTabs"></div>
+      <div class="squad-dashboard-card">
+        <div class="squad-metrics-row">
+          <div class="metric-box">
+            <span class="metric-label">TOTAL PLAYERS</span>
+            <div class="metric-val" id="squadTotalPlayers">0 / 25</div>
+            <span class="metric-sub">Min 18 required</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">OVERSEAS SLOTS</span>
+            <div class="metric-val" id="squadOverseasCount">0 / 8</div>
+            <span class="metric-sub">Max 8 allowed</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">TOTAL SPENT</span>
+            <div class="metric-val text-gold" id="squadTotalSpent">₹0.00 Cr</div>
+            <span class="metric-sub">Purse: <span id="squadPurseLeft">₹120.00 Cr</span></span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">OVERALL SQUAD RATING</span>
+            <div class="metric-val text-emerald" id="squadOverallRating">-- / 100</div>
+            <span class="metric-sub" id="squadGradeTag">Squad Incomplete</span>
+          </div>
+        </div>
+
+        <!-- Squad Balance Meters -->
+        <div class="squad-balance-section">
+          <h3>SQUAD BALANCE METERS</h3>
+          <div class="balance-meters-grid">
+            <div class="balance-bar-row">
+              <div class="bar-labels">
+                <span>Batting Depth</span>
+                <span id="battersCountLabel">0 Batters (Rating: 0)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill fill-batting" id="barBatting" style="width: 0%;"></div></div>
+            </div>
+            <div class="balance-bar-row">
+              <div class="bar-labels">
+                <span>Bowling Attack</span>
+                <span id="bowlersCountLabel">0 Bowlers (Rating: 0)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill fill-bowling" id="barBowling" style="width: 0%;"></div></div>
+            </div>
+            <div class="balance-bar-row">
+              <div class="bar-labels">
+                <span>All-Round Prowess</span>
+                <span id="allRoundersCountLabel">0 All-Rounders (Rating: 0)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill fill-allround" id="barAllRound" style="width: 0%;"></div></div>
+            </div>
+            <div class="balance-bar-row">
+              <div class="bar-labels">
+                <span>Wicketkeeping</span>
+                <span id="keepersCountLabel">0 Wicketkeepers (Rating: 0)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill fill-keeper" id="barKeeper" style="width: 0%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Players in Squad Grid -->
+      <div class="squad-players-grid" id="squadPlayersGrid">
+        <div class="empty-squad-notice">
+          <div class="empty-icon">🏏</div>
+          <h3>No Players Acquired Yet</h3>
+          <p>Head over to the Auction Room and place your bids to assemble your championship XI.</p>
+          <button class="btn btn-gold" onclick="window.iplApp.navigateTo('auction')">ENTER AUCTION ROOM</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 6. PLAYER DATABASE & FILTERS VIEW -->
+    <!-- ========================================== -->
+    <section id="view-players" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">PLAYER DIRECTORY</span>
+          <h2>Player Database</h2>
+          <p>Search, filter, and analyze all players in the selected season's auction pool.</p>
+        </div>
+      </div>
+
+      <!-- Filter Controls Bar -->
+      <div class="player-filter-panel">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="playerSearchInput" placeholder="Search by player name..." oninput="window.iplApp.filterPlayersDatabase()">
+        </div>
+
+        <div class="filters-row">
+          <div class="filter-group">
+            <label>Role:</label>
+            <select id="filterRole" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="all">All Roles</option>
+              <option value="Batter">Batter</option>
+              <option value="Bowler">Bowler</option>
+              <option value="All-rounder">All-rounder</option>
+              <option value="Wicketkeeper">Wicketkeeper</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Nationality:</label>
+            <select id="filterNationality" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="all">All Nationalities</option>
+              <option value="Indian">Indian</option>
+              <option value="Overseas">Overseas</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Price Range:</label>
+            <select id="filterPrice" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="all">All Prices</option>
+              <option value="under1">Under ₹1 Cr</option>
+              <option value="1to5">₹1.00 – ₹5.00 Cr</option>
+              <option value="5to10">₹5.00 – ₹10.00 Cr</option>
+              <option value="above10">₹10.00+ Cr</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Auction Status:</label>
+            <select id="filterStatus" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="all">All Statuses</option>
+              <option value="available">Available</option>
+              <option value="sold">Sold</option>
+              <option value="unsold">Unsold</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Original Team:</label>
+            <select id="filterOriginalTeam" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="all">All Teams</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label>Sort By:</label>
+            <select id="sortPlayers" onchange="window.iplApp.filterPlayersDatabase()">
+              <option value="ratingDesc">Rating (High to Low)</option>
+              <option value="priceDesc">Price (High to Low)</option>
+              <option value="priceAsc">Price (Low to High)</option>
+              <option value="nameAsc">Name (A–Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Count Summary -->
+      <div class="results-count-bar">
+        <span>Showing <strong id="playersMatchingCount">0</strong> players</span>
+      </div>
+
+      <!-- Players Table / Cards Container -->
+      <div class="players-table-wrapper">
+        <table class="players-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Role</th>
+              <th>Nationality</th>
+              <th>Rating</th>
+              <th>Base Price</th>
+              <th>Original Team</th>
+              <th>Auction Status</th>
+              <th>Sold Price</th>
+              <th>Sold Team</th>
+            </tr>
+          </thead>
+          <tbody id="playersTableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 7. ALL TEAMS VIEW -->
+    <!-- ========================================== -->
+    <section id="view-teams" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">FRANCHISE DIRECTORY</span>
+          <h2>All Teams & Squads</h2>
+          <p>Examine rival franchises, their spending, remaining purse, and player rosters.</p>
+        </div>
+      </div>
+
+      <div class="all-teams-grid" id="allTeamsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 8. STATISTICS VIEW -->
+    <!-- ========================================== -->
+    <section id="view-statistics" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">AUCTION ANALYTICS</span>
+          <h2>Live Auction Statistics</h2>
+          <p>Real-time market trends, highest purchases, and financial breakdowns.</p>
+        </div>
+      </div>
+
+      <!-- Key Numbers Row -->
+      <div class="stats-overview-grid">
+        <div class="overview-stat-card">
+          <span class="card-title">PLAYERS AUCTIONED</span>
+          <div class="card-val" id="statAuctionedCount">0</div>
+          <span class="card-sub" id="statRemainingCount">20 Remaining</span>
+        </div>
+        <div class="overview-stat-card">
+          <span class="card-title">PLAYERS SOLD</span>
+          <div class="card-val text-emerald" id="statSoldCount">0</div>
+          <span class="card-sub" id="statSoldPct">0% Sold Rate</span>
+        </div>
+        <div class="overview-stat-card">
+          <span class="card-title">PLAYERS UNSOLD</span>
+          <div class="card-val text-rose" id="statUnsoldCount">0</div>
+          <span class="card-sub">Available for Re-Auction</span>
+        </div>
+        <div class="overview-stat-card">
+          <span class="card-title">TOTAL MONEY SPENT</span>
+          <div class="card-val text-gold" id="statTotalSpent">₹0.00 Cr</div>
+          <span class="card-sub">Across All Franchises</span>
+        </div>
+        <div class="overview-stat-card">
+          <span class="card-title">AVERAGE PLAYER PRICE</span>
+          <div class="card-val" id="statAvgPrice">₹0.00 Cr</div>
+          <span class="card-sub">Per Sold Player</span>
+        </div>
+        <div class="overview-stat-card">
+          <span class="card-title">TOTAL REMAINING PURSE</span>
+          <div class="card-val" id="statTotalRemainingPurse">₹1,200.00 Cr</div>
+          <span class="card-sub">Total Market Liquidity</span>
+        </div>
+      </div>
+
+      <!-- Highlight Cards -->
+      <div class="stats-highlights-row">
+        
+        <!-- Highest Bid Spotlight -->
+        <div class="highlight-banner-card">
+          <div class="banner-badge">🔥 HIGHEST BID OF THE AUCTION</div>
+          <div class="banner-details">
+            <div class="highest-player-group">
+              <h2 id="highestBidPlayerName">No Sales Yet</h2>
+              <span class="highest-player-team" id="highestBidPlayerTeam">Waiting for auction bids</span>
+            </div>
+            <div class="highest-amount text-gold" id="highestBidAmount">₹0.00 Cr</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Top 5 Most Expensive Players Table -->
+      <div class="table-card">
+        <h3>TOP ACQUISITIONS OF THE SEASON</h3>
+        <div class="players-table-wrapper">
+          <table class="players-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Role</th>
+                <th>Winning Franchise</th>
+                <th>Winning Bid</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody id="topBuysTableBody">
+              <tr><td colspan="6" class="text-center">No players sold yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 9. IPL HISTORY TIMELINE VIEW -->
+    <!-- ========================================== -->
+    <section id="view-history" class="app-view">
+      <div class="view-header">
+        <div class="header-text">
+          <span class="sub-heading">ARCHIVES & LORE</span>
+          <h2>IPL Historical Timeline (2008–2026)</h2>
+          <p>Relive 19 legendary editions of cricket's biggest carnival. Click any season to launch its auction.</p>
+        </div>
+      </div>
+
+      <div class="history-timeline-container" id="historyTimeline">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 10. RESULTS & CEREMONY VIEW -->
+    <!-- ========================================== -->
+    <section id="view-results" class="app-view">
+      <div class="results-ceremony-banner">
+        <div class="trophy-anim">🏆</div>
+        <span class="ceremony-eyebrow">THE HAMMER HAS FALLEN</span>
+        <h1>AUCTION COMPLETE</h1>
+        <p>The auction war has concluded. Let's see who built the best championship franchise!</p>
+      </div>
+
+      <!-- Best Team / Winner Spotlight Card -->
+      <div class="winner-champion-card" id="winnerChampionCard">
+        <div class="card-ribbon">🏆 BEST AUCTION TEAM</div>
+        <div class="winner-body">
+          <div class="winner-crest" id="winnerBadge">🦁</div>
+          <div class="winner-info">
+            <h2 id="winnerTeamName">Chennai Super Kings</h2>
+            <div class="winner-metrics-grid">
+              <div class="w-metric">
+                <span>Squad Rating</span>
+                <strong class="text-emerald" id="winnerRating">94 / 100</strong>
+              </div>
+              <div class="w-metric">
+                <span>Total Spent</span>
+                <strong class="text-gold" id="winnerSpent">₹118.50 Cr</strong>
+              </div>
+              <div class="w-metric">
+                <span>Remaining Purse</span>
+                <strong id="winnerPurse">₹1.50 Cr</strong>
+              </div>
+              <div class="w-metric">
+                <span>Players Bought</span>
+                <strong id="winnerSquadCount">22 Players</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Team Performance Summary -->
+      <div class="my-team-results-card" id="myTeamResultsCard">
+        <div class="results-card-header">
+          <span class="team-tag">MY FRANCHISE EVALUATION</span>
+          <h3 id="resultMyTeamName">Chennai Super Kings</h3>
+        </div>
+        <div class="my-team-summary-grid">
+          <div class="eval-stat">
+            <span>Players Bought</span>
+            <strong id="resultMySquadCount">20</strong>
+          </div>
+          <div class="eval-stat">
+            <span>Total Spent</span>
+            <strong class="text-gold" id="resultMyTotalSpent">₹116.50 Cr</strong>
+          </div>
+          <div class="eval-stat">
+            <span>Remaining Purse</span>
+            <strong id="resultMyPurseLeft">₹3.50 Cr</strong>
+          </div>
+          <div class="eval-stat">
+            <span>Overall Squad Rating</span>
+            <strong class="text-emerald" id="resultMyRating">92 / 100</strong>
+          </div>
+          <div class="eval-stat">
+            <span>Final Ranking</span>
+            <strong class="text-gold" id="resultMyRank">#1 of 10</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final Rankings Leaderboard -->
+      <div class="table-card">
+        <h3>FINAL FRANCHISE RANKINGS</h3>
+        <p class="table-subtitle">Rankings dynamically scored based on Squad Quality, Role Balance, Purse Optimization, and Roster Depth.</p>
+        <div class="players-table-wrapper">
+          <table class="players-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Franchise</th>
+                <th>Squad Rating</th>
+                <th>Players Bought</th>
+                <th>Total Spent</th>
+                <th>Remaining Purse</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="finalRankingsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="results-footer-actions">
+        <button class="btn btn-gold btn-large" onclick="window.iplApp.navigateTo('seasons')">
+          PLAY ANOTHER SEASON 🔄
+        </button>
+        <button class="btn btn-glass btn-large" onclick="window.iplApp.navigateTo('squad')">
+          INSPECT MY SQUAD 📋
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODALS -->
+  <!-- ========================================== -->
+
+  <!-- Reset Confirmation Modal -->
+  <div class="modal-backdrop" id="resetModal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>RESET AUCTION?</h3>
+        <button class="modal-close-btn" onclick="window.iplApp.closeResetModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to reset all auction progress? All acquired squads, spent purses, and bidding history for this season will be permanently cleared.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="window.iplApp.closeResetModal()">CANCEL</button>
+        <button class="btn btn-danger" onclick="window.iplApp.confirmReset()">RESET AUCTION</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Squad Inspector Modal -->
+  <div class="modal-backdrop" id="teamSquadModal" style="display: none;">
+    <div class="modal-dialog modal-large">
+      <div class="modal-header">
+        <div class="header-with-badge">
+          <span class="modal-badge" id="modalTeamBadge">🦁</span>
+          <div>
+            <h3 id="modalTeamName">Chennai Super Kings</h3>
+            <span class="modal-sub" id="modalTeamSubtitle">Purse: ₹120.00 Cr | Squad: 0 Players</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="window.iplApp.closeTeamSquadModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modalTeamSquadBody">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Logic Script -->
+  <script src="app.js"></script>
+</body>
+</html>
